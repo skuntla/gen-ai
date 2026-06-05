@@ -1,5 +1,13 @@
 # Core Concepts — Phase 01
 
+## Project context
+
+This phase is the starting point of a **Stock Research Assistant** for Indian equities. By the end of all 11 phases, the system will take a stock ticker, research it across multiple dimensions, and produce an investment scorecard (Buy / Hold / Avoid).
+
+Phase 01 is deliberately simple: call the LLM with a raw piece of financial text and observe what it returns. No tools, no retrieval, no schema. Just the API.
+
+---
+
 ## What an LLM actually is (from an engineering perspective)
 
 Every LLM provider — Anthropic, OpenAI, Google — exposes their model as an **HTTP API**. You send a JSON payload, you get a JSON response back. The intelligence lives on their servers. You are making web requests.

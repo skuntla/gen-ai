@@ -10,18 +10,38 @@
 
 This project implements the **11-phase, build-as-you-learn GenAI roadmap** from In Context. The goal is not to read about generative AI in the abstract, but to grow **one running Python codebase** from a single LLM API call into a production-minded multi-agent system with RAG, memory, tools, guardrails, evals, and observability.
 
-Each phase ships a **working artifact** that the next phase extends. By the end, you will have:
+### Project domain: Stock Research Assistant (Indian equities)
 
-- A CLI chat tool (`llm_chat.py`)
-- A document Q&A pipeline (`rag.py`)
-- A regression eval suite (`promptfooconfig.yaml`)
-- A tool-using agent (`agent.py`)
+The codebase is built around a single, coherent use case: **given a stock ticker, research the company and produce an investment scorecard**.
+
+The system analyses:
+- Promoter holding — current percentage and trend
+- Profitability — net margin, ROE, ROCE over 3–5 years
+- Revenue growth — YoY percentage, consistency
+- Earnings quality — recent quarterly results vs estimates
+- Debt levels — debt-to-equity, interest coverage
+- News sentiment — recent headlines, red flags
+
+Output: a structured scorecard with a Buy / Hold / Avoid recommendation and score out of 100.
+
+This domain was chosen because:
+- All data sources are free and public (NSE/BSE filings, `yfinance`, Screener.in, news RSS)
+- The problem is naturally multi-tool and multi-step — a perfect fit for Phases 04–10
+- Answer quality is immediately verifiable against known facts
+- US stocks can be added later as an extension without changing the architecture
+
+### Artifacts produced phase by phase
+
+- A CLI that queries an LLM about a company (`llm_chat.py`)
+- A RAG pipeline over annual reports and earnings transcripts (`rag.py`)
+- A regression eval suite for extraction accuracy (`promptfooconfig.yaml`)
+- A tool-using research agent (`agent.py`)
 - Observability dashboards (`traces.ipynb`)
-- Safety guardrails (`guardrails.py`)
-- Cross-session memory (`memory.py`)
-- An MCP server (`sql_mcp_server/`)
+- Safety guardrails — invalid tickers, stale data, schema validation (`guardrails.py`)
+- Cross-session memory of past research runs (`memory.py`)
+- An MCP server for financial data lookup (`sql_mcp_server/`)
 - Agent-level CI evals (`agent_evals/`)
-- A multi-agent orchestration prototype (`swarm.py`)
+- A multi-agent system: data fetcher + analyst + report writer (`swarm.py`)
 - A harness comparison writeup (`harness.md`)
 
 ---
@@ -120,7 +140,7 @@ genai-learning-path/
 
 | Layer | Default choice | Alternatives |
 |-------|----------------|--------------|
-| LLM provider | Anthropic Claude | OpenAI GPT |
+| LLM provider | Google Gemini 2.0 Flash (free) → Anthropic Claude from Phase 03 | OpenAI GPT |
 | Embeddings | OpenAI `text-embedding-3-small` | Voyage, Cohere |
 | Vector store | FAISS (in-memory) | Chroma, Pinecone |
 | PDF parsing | `pdfplumber` / `pypdf` | — |
@@ -129,6 +149,9 @@ genai-learning-path/
 | MCP SDK | `mcp` Python package | — |
 | Multi-agent | LangGraph or Strands | OpenAI Swarm |
 | Guardrails | Hand-rolled + Pydantic | Guardrails AI, NeMo |
+| Financial data | `yfinance` (free, no key) | Alpha Vantage, Polygon.io |
+| Indian fundamentals | Screener.in (manual export / scrape) | Ticker Tape, Moneycontrol |
+| News | NewsAPI free tier / RSS feeds | Google News RSS |
 
 ---
 

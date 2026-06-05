@@ -4,10 +4,15 @@
 
 `src/llm_chat.py` — a CLI tool and reusable module.
 
+In the context of the Stock Research Assistant, Phase 01 is the foundation: a clean way to send any text to an LLM and get a response. Later phases will wrap this to analyse earnings reports, extract financial ratios, and classify news.
+
 ```bash
-python src/llm_chat.py "What is RAG?"
-python src/llm_chat.py "What is RAG?" --model claude-haiku-4-5
-python src/llm_chat.py "What is RAG?" --system "Reply in one sentence" --temperature 0.2
+python src/llm_chat.py "Summarise this company's recent earnings performance" \
+  --system "You are a financial analyst specialising in Indian equities."
+
+python src/llm_chat.py "What is the promoter holding trend for Infosys?" \
+  --model gemini-2.0-flash \
+  --temperature 0.1
 ```
 
 ---
