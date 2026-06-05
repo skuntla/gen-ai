@@ -1,31 +1,32 @@
 # GenAI Learning Path
 
-A step-by-step implementation of [The GenAI Learning Path](https://www.incontext.sh/learning/genai) by In Context.
+A hands-on implementation of [The GenAI Learning Path](https://www.incontext.sh/learning/genai) by In Context.
 
-**Status:** Planning — requirements only. No code yet.
+One evolving Python codebase built across 11 phases — from a raw LLM API call to a production-minded multi-agent system.
 
-## Start here
+## Phases
 
-Read the full requirements document:
+| # | Topic | Artifact |
+|---|-------|----------|
+| 01 | Talk to an LLM | `src/llm_chat.py` |
+| 02 | RAG over your documents | `src/rag.py` |
+| 03 | Systematic evaluation | `evals/promptfooconfig.yaml` |
+| 04 | Tool-using agent | `src/agent.py` |
+| 05 | Observability & cost | `notebooks/traces.ipynb` |
+| 06 | Guardrails & safety | `src/guardrails.py` |
+| 07 | Cross-session memory | `src/memory.py` |
+| 08 | MCP tool standardization | `mcp/sql_mcp_server/` |
+| 09 | Agent-level CI evals | `evals/agent_evals/` |
+| 10 | Multi-agent orchestration | `src/swarm.py` |
+| 11 | Harness & production runtime | `harness.md` |
 
-→ **[docs/REQUIREMENTS.md](docs/REQUIREMENTS.md)**
+## Setup
 
-## What this project will become
+```bash
+cp .env.example .env   # add your API keys
+pip install -r requirements.txt
+```
 
-One evolving Python codebase that grows through 11 phases:
+## Reference
 
-1. Talk to an LLM
-2. RAG over your documents
-3. Systematic evaluation
-4. Tool-using agent
-5. Observability & cost optimization
-6. Guardrails & safety
-7. Cross-session memory
-8. MCP tool standardization
-9. Agent-level CI evals
-10. Multi-agent orchestration
-11. Harness understanding
-
-## Next step
-
-Review `docs/REQUIREMENTS.md`, resolve the open decisions in Section 9, then say **"start Phase 01"** when ready to implement.
+Full requirements and design decisions: [docs/REQUIREMENTS.md](docs/REQUIREMENTS.md)

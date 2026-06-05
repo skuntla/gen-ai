@@ -1,7 +1,7 @@
 # GenAI Learning Path — Requirements Document
 
 > **Source curriculum:** [The GenAI Learning Path — In Context](https://www.incontext.sh/learning/genai)  
-> **Status:** Planning / Phase 0 — no implementation yet  
+> **Status:** In progress  
 > **Last updated:** 2026-06-06
 
 ---
@@ -630,18 +630,18 @@ The project is **complete** when:
 
 ---
 
-## 11. How We Will Implement (step-by-step guidance)
+## 11. Phase Workflow
 
-When you are ready to begin implementation, we will proceed **one phase at a time**:
+Each phase follows the same pattern:
 
-1. **Kickoff phase** — Review requirements for that phase only
-2. **Scaffold** — Add only the files and dependencies needed
-3. **Build** — Implement the deliverable following the plan above
-4. **Verify** — Run acceptance criteria checklist
-5. **Reflect** — Write 5 surprise bullets
-6. **Checkpoint** — Commit (if using git) before moving to next phase
+1. Review requirements for that phase only
+2. Scaffold — add only the files and dependencies needed
+3. Implement the deliverable
+4. Run the acceptance criteria checklist
+5. Write 5 reflection bullets in `docs/PHASE-NOTES/phase-NN.md`
+6. Commit before moving to the next phase
 
-**Do not batch phases.** The pedagogical value is in watching one codebase grow.
+Phases are sequential. Do not batch them.
 
 ---
 
@@ -657,4 +657,4 @@ When you are ready to begin implementation, we will proceed **one phase at a tim
 
 ---
 
-*This document is the single source of truth for project scope. Implementation begins only after you confirm open decisions in Section 9 and say "start Phase 01."*
+*This document is the single source of truth for project scope.*
