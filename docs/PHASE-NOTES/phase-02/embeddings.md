@@ -184,6 +184,121 @@ ollama pull nomic-embed-text
 
 ---
 
+---
+
+## End-to-end retrieval: a detailed walkthrough
+
+This traces exactly what happens from document ingestion to returning a chunk for a user query.
+
+### Step 1 — Documents are chunked and embedded at index time
+
+You have three chunks from an Infosys annual report:
+
+```
+Chunk A: "Infosys reported an operating margin of 21.3% in FY2024, up from 20.1% in FY2023."
+Chunk B: "The board approved a final dividend of ₹20 per share for FY2024."
+Chunk C: "Revenue from North America grew 8.2% year on year, contributing 61% of total revenue."
+```
+
+Each chunk is sent to the embedding model (e.g. `text-embedding-3-small`). The model returns a vector for each:
+
+```
+Chunk A → [0.82, 0.11, -0.43, 0.67, 0.29, ...]   # 1536 numbers
+Chunk B → [0.21, 0.74, 0.09, -0.31, 0.55, ...]   # 1536 numbers
+Chunk C → [0.44, 0.18, -0.12, 0.51, 0.33, ...]   # 1536 numbers
+```
+
+FAISS stores all three vectors in an index (a file on disk). The original chunk text is stored separately alongside, keyed by position.
+
+---
+
+### Step 2 — User asks a question
+
+```
+User: "What was Infosys's operating margin in FY2024?"
+```
+
+This question is sent to the **same embedding model**:
+
+```
+Question → [0.79, 0.14, -0.39, 0.71, 0.31, ...]   # 1536 numbers
+```
+
+---
+
+### Step 3 — FAISS computes similarity scores
+
+FAISS compares the question vector against every stored chunk vector using cosine similarity:
+
+```
+similarity(Question, Chunk A) = 0.94   ← very similar (both about operating margin/FY2024)
+similarity(Question, Chunk B) = 0.31   ← not similar (dividend, unrelated)
+similarity(Question, Chunk C) = 0.58   ← somewhat similar (also about FY2024 financials)
+```
+
+**Why is Chunk A the closest?**
+Because both the question and Chunk A contain concepts around "operating margin", "Infosys", and "FY2024". The embedding model learned during training that these concepts belong together — so their vectors point in similar directions in the 1536-dimensional space.
+
+FAISS sorts by score and returns the top-K (e.g. K=2):
+```
+1st: Chunk A (score 0.94)
+2nd: Chunk C (score 0.58)
+```
+
+---
+
+### Step 4 — Retrieved chunks are passed to the LLM
+
+The system builds this prompt:
+
+```
+CONTEXT:
+[Chunk A] Infosys reported an operating margin of 21.3% in FY2024, up from 20.1% in FY2023.
+[Chunk C] Revenue from North America grew 8.2% year on year, contributing 61% of total revenue.
+
+QUESTION:
+What was Infosys's operating margin in FY2024?
+
+Answer based only on the context above. If the answer is not in the context, say so.
+```
+
+The LLM reads the context and responds:
+
+```
+Infosys's operating margin in FY2024 was 21.3%, an improvement from 20.1% in FY2023.
+Source: Chunk A (Infosys Annual Report FY2024)
+```
+
+---
+
+### Who does what — responsibility map
+
+| Step | Who does it | What they do |
+|---|---|---|
+| Chunk documents | Your code (`rag.py`) | Splits text into ~500 char pieces |
+| Embed chunks | Embedding model API | Text → vector (1536 numbers) |
+| Store vectors | FAISS | Saves all vectors to an in-memory index |
+| Embed query | Same embedding model API | User question → vector |
+| Find nearest vectors | FAISS | Computes cosine similarity, returns top-K |
+| Generate answer | LLM (Groq/Anthropic) | Reads chunks + question, produces grounded answer |
+
+The embedding model and the LLM never talk to each other directly. Your code (`rag.py`) orchestrates the whole flow — call embedding model, get vector, ask FAISS, get chunks, build prompt, call LLM.
+
+---
+
+### What if FAISS returns the wrong chunk?
+
+This is the most common RAG quality problem. It happens when:
+
+1. **Chunk is too large** — the relevant sentence is buried in a big block of irrelevant text
+2. **Chunk is too small** — it's missing the context needed to answer
+3. **Wrong embedding model** — a model not trained on financial text may not understand that "margin" and "profitability" are related
+4. **K is too low** — the right answer is in chunk #6 but you only retrieved top-3
+
+This is exactly why Phase 03 (Eval) exists — to measure whether retrieved chunks actually match the questions you care about.
+
+---
+
 ## The key constraint: same model for index and query
 
 This is the most common RAG mistake. If you embed your documents with `text-embedding-3-small` and then embed your query with `all-MiniLM-L6-v2`, the vectors are in completely different spaces. Similarity scores will be meaningless.
