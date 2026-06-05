@@ -48,7 +48,9 @@ Reserve frontier models (Sonnet, GPT-4o) for:
 
 ## Strategy for this learning path
 
-**Phases 01–02:** Google AI Studio free tier (Gemini 2.0 Flash). Zero cost, same concepts, no friction.
+**Phases 01–02:** Groq free tier (Llama 3.3 70B) + Ollama local (Llama 3.1 8B). Zero cost.
+- Google AI Studio free tier is an alternative but has regional restrictions — Groq is more reliable
+- Ollama on Apple Silicon (M1/M2/M3/M4) is fast enough for iteration and exploration
 
 **Phase 03 onward:** Anthropic. Add $10 to your account — it will last the entire path.
 

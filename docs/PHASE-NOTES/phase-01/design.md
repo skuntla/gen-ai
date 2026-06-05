@@ -7,12 +7,17 @@
 In the context of the Stock Research Assistant, Phase 01 is the foundation: a clean way to send any text to an LLM and get a response. Later phases will wrap this to analyse earnings reports, extract financial ratios, and classify news.
 
 ```bash
-python src/llm_chat.py "Summarise this company's recent earnings performance" \
-  --system "You are a financial analyst specialising in Indian equities."
+# Default provider from .env
+python src/llm_chat.py "What is the promoter holding trend for TCS?"
 
-python src/llm_chat.py "What is the promoter holding trend for Infosys?" \
-  --model gemini-2.0-flash \
-  --temperature 0.1
+# Explicitly pick provider and model
+python src/llm_chat.py "Is Infosys a good investment?" --provider groq --model llama-3.3-70b-versatile
+python src/llm_chat.py "Is Infosys a good investment?" --provider ollama --model llama3.1:8b
+
+# Override system prompt and temperature
+python src/llm_chat.py "Summarise Infosys earnings" \
+  --system "You are a financial analyst. Be concise." \
+  --temperature 0.0
 ```
 
 ---
@@ -21,9 +26,11 @@ python src/llm_chat.py "What is the promoter holding trend for Infosys?" \
 
 | Library | Purpose |
 |---|---|
-| `anthropic` | Official Anthropic SDK — handles auth, retries, response parsing |
+| `groq` | Groq SDK — used for cloud inference (Llama 3.3 70B, free tier) |
+| `openai` | OpenAI SDK — reused for Ollama's OpenAI-compatible local API |
+| `anthropic` | Anthropic SDK — added when switching to Claude (Phase 03+) |
 | `python-dotenv` | Loads `.env` into environment variables at startup |
-| `argparse` | Parses CLI flags (`--model`, `--system`, `--temperature`) |
+| `argparse` | Parses CLI flags (`--model`, `--system`, `--temperature`, `--provider`) |
 
 No frameworks. Raw SDK calls only — every layer is visible and nothing is hidden behind an abstraction.
 
@@ -54,9 +61,9 @@ LLM_MODEL=claude-haiku-4-5
 A thin routing layer inside `llm_chat.py` maps provider name to SDK call:
 
 ```
-LLM_PROVIDER=groq       → Groq SDK    (Phases 01–02)
-LLM_PROVIDER=anthropic  → Anthropic SDK (Phase 03+)
-LLM_PROVIDER=openai     → OpenAI SDK  (optional)
+LLM_PROVIDER=groq       → Groq SDK         (Phases 01–02, cloud, free)
+LLM_PROVIDER=ollama     → OpenAI SDK        (local, free, needs ollama serve)
+LLM_PROVIDER=anthropic  → Anthropic SDK     (Phase 03+, paid)
 ```
 
 The public function signature never changes:
@@ -97,9 +104,9 @@ Keys are loaded via `python-dotenv`. Hardcoding is not an option — it's enforc
 
 ## Acceptance criteria
 
-- [ ] `python src/llm_chat.py "What is RAG?"` returns a response
-- [ ] Same prompt on Haiku vs Sonnet shows measurable quality, latency, and cost difference
-- [ ] System prompt visibly changes tone and format of output
-- [ ] API keys loaded from `.env`, not hardcoded
-- [ ] Token usage and estimated cost printed on every call
-- [ ] Module is importable by later phases (clean function API, not just a script)
+- [x] `python src/llm_chat.py "What is the promoter holding trend for TCS?"` returns a response
+- [x] Same prompt on Groq 70B (cloud) vs Ollama 8B (local) shows measurable latency difference (686ms vs 12,835ms)
+- [x] System prompt visibly changes output — "one sentence" prompt reduced output from 356 to 28 tokens
+- [x] API keys loaded from `.env`, not hardcoded
+- [x] Token usage and estimated cost printed on every call
+- [x] Module is importable by later phases (`from src.llm_chat import chat`)

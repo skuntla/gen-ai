@@ -65,6 +65,32 @@ Building the habit now means you don't retrofit it when you switch to a paid pro
 
 ---
 
+## Local models and Ollama
+
+**Q: What is Ollama and what problem does it solve?**
+Ollama is a tool that downloads and runs open-source LLMs locally on your machine. It exposes a local HTTP API (on port 11434) so you can query models exactly like a cloud provider — no internet, no API cost, no data leaving your machine.
+
+**Q: Why does the Ollama provider in `llm_chat.py` use the OpenAI SDK instead of a dedicated Ollama SDK?**
+Ollama deliberately exposes an OpenAI-compatible API (`/v1/chat/completions`). This means any code already written for OpenAI works with Ollama by just changing the `base_url`. Rather than adding a new SDK dependency, we reuse `openai` with `base_url=http://localhost:11434/v1` and `api_key="ollama"` (a dummy value — Ollama doesn't require auth). This is a good example of not adding dependencies you don't need.
+
+**Q: What is quantization and why does it matter for local models?**
+Quantization reduces the numerical precision of model weights to shrink their size. A full-precision (FP16) 8B model weighs ~16GB. A Q4 quantized version is ~5GB. Ollama downloads Q4 by default. The trade-off: slightly lower quality, but fits in RAM and runs fast enough to be practical. For most tasks the difference is unnoticeable.
+
+**Q: When would you choose local (Ollama) over cloud (Groq)?**
+- When data privacy is a concern (data never leaves your machine)
+- When working offline
+- When you need zero cost at high volume
+- When experimenting rapidly and don't want to burn API quota
+Use cloud when you need stronger model quality, lower latency on first token, or models too large for your RAM.
+
+**Q: How do you verify Ollama is running?**
+```bash
+curl http://localhost:11434/api/tags
+```
+If it returns a JSON list of models — running. If "connection refused" — start it with `ollama serve`.
+
+---
+
 ## Broader / interview-level
 
 **Q: What is the difference between a workflow and an agent?**
