@@ -31,6 +31,44 @@ No frameworks. Raw SDK calls only — every layer is visible and nothing is hidd
 
 ## Key design decisions
 
+### Model and provider as configuration, not code
+
+Model names and providers are never hardcoded. They are read from environment variables with sensible defaults:
+
+```python
+provider = os.getenv("LLM_PROVIDER", "groq")
+model    = os.getenv("LLM_MODEL", "llama-3.3-70b-versatile")
+```
+
+To switch from Groq to Anthropic, change `.env` only — no code change required:
+
+```
+LLM_PROVIDER=anthropic
+LLM_MODEL=claude-haiku-4-5
+```
+
+`llm_chat.py` reads the provider and routes to the correct SDK internally. All callers — including Phases 04, 07, and 10 — call the same `chat()` function regardless of which provider is underneath.
+
+### Provider abstraction
+
+A thin routing layer inside `llm_chat.py` maps provider name to SDK call:
+
+```
+LLM_PROVIDER=groq       → Groq SDK    (Phases 01–02)
+LLM_PROVIDER=anthropic  → Anthropic SDK (Phase 03+)
+LLM_PROVIDER=openai     → OpenAI SDK  (optional)
+```
+
+The public function signature never changes:
+
+```python
+def chat(prompt, system=None, temperature=0.1, model=None, provider=None) -> dict:
+    # always returns:
+    # {"response": "...", "input_tokens": 41, "output_tokens": 24, "cost_usd": 0.0001}
+```
+
+This means swapping providers during Phase 03 is a one-line `.env` change — not a refactor.
+
 ### Module, not just a script
 
 `llm_chat.py` exposes a callable function in addition to a `__main__` CLI entry point. Phase 04 imports it directly as a dependency. This forces clean separation between the interface and the logic from day one and avoids a refactor later.
