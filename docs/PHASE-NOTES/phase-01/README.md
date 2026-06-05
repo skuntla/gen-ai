@@ -10,6 +10,7 @@
 
 | File | What's in it |
 |---|---|
+| [setup.md](setup.md) | Getting a Google AI Studio API key, .env setup, verify it works |
 | [concepts.md](concepts.md) | LLM API basics, messages format, tokens, statelessness |
 | [temperature.md](temperature.md) | How temperature and top_p work under the hood |
 | [model-cost.md](model-cost.md) | Model selection, pricing, free options, cost strategy |
