@@ -50,6 +50,36 @@ def _call_groq(prompt: str, system: str, temperature: float, model: str) -> dict
     }
 
 
+def _call_ollama(prompt: str, system: str, temperature: float, model: str) -> dict:
+    from openai import OpenAI
+
+    base_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434/v1")
+    client = OpenAI(api_key="ollama", base_url=base_url)
+    start = time.time()
+    response = client.chat.completions.create(
+        model=model,
+        temperature=temperature,
+        messages=[
+            {"role": "system", "content": system},
+            {"role": "user",   "content": prompt},
+        ],
+    )
+    latency_ms = int((time.time() - start) * 1000)
+
+    input_tokens  = response.usage.prompt_tokens
+    output_tokens = response.usage.completion_tokens
+
+    return {
+        "response":      response.choices[0].message.content,
+        "input_tokens":  input_tokens,
+        "output_tokens": output_tokens,
+        "cost_usd":      0.0,
+        "model":         model,
+        "provider":      "ollama",
+        "latency_ms":    latency_ms,
+    }
+
+
 def _call_anthropic(prompt: str, system: str, temperature: float, model: str) -> dict:
     import anthropic
 
@@ -104,10 +134,12 @@ def chat(
 
     if provider == "groq":
         return _call_groq(prompt, system, temperature, model)
+    elif provider == "ollama":
+        return _call_ollama(prompt, system, temperature, model)
     elif provider == "anthropic":
         return _call_anthropic(prompt, system, temperature, model)
     else:
-        raise ValueError(f"Unknown provider '{provider}'. Supported: groq, anthropic")
+        raise ValueError(f"Unknown provider '{provider}'. Supported: groq, ollama, anthropic")
 
 
 def _print_result(result: dict) -> None:
