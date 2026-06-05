@@ -53,13 +53,46 @@ Rule: use the smallest model that gets the job done.
 
 ### 3. Temperature
 
-| Value | Behaviour | Good for |
-|---|---|---|
-| `0.0` | Deterministic — always picks the most likely token | Structured output, code, SQL |
-| `0.1–0.7` | Slightly varied | Most tasks |
-| `1.0+` | Creative, unpredictable | Brainstorming, creative writing |
+#### What's actually happening
 
-Often overhyped. Most tasks work fine at 0–0.3. Above 0.7 the difference is mostly noise.
+The model doesn't write a sentence — it predicts **one token at a time**. After each token it produces a probability distribution over its entire vocabulary. Temperature controls how that distribution is used to pick the next token.
+
+After "The sky is":
+```
+"blue"      → 42%
+"clear"     → 18%
+"dark"      → 11%
+"beautiful" → 8%
+"grey"      → 6%
+```
+
+- **Temperature = 0.0** — always picks the highest probability token. Fully deterministic.
+- **Temperature < 1.0** — distribution is sharpened. High-probability tokens dominate even more.
+- **Temperature = 1.0** — use the distribution as-is.
+- **Temperature > 1.0** — distribution is flattened. Unlikely tokens become competitive. Outputs get unpredictable.
+
+#### When to use each range
+
+| Range | Use case |
+|---|---|
+| `0.0` | SQL, JSON extraction, code, structured output |
+| `0.1–0.3` | Q&A, summarization, factual tasks |
+| `0.4–0.7` | Explanations, writing assistance, chat |
+| `0.8–1.0` | Brainstorming, generating options, creative writing |
+| `> 1.0` | Rarely useful — outputs become incoherent quickly |
+
+#### The common misconception
+
+Higher temperature ≠ smarter or more creative. It means **more random**. On a hard reasoning task, temperature 1.0 makes the model *worse* because it introduces randomness into token choices that should be deterministic. Reach for higher temperature only when variety is the explicit goal.
+
+#### top_p (nucleus sampling)
+
+Temperature has a sibling: `top_p`. Instead of scaling the whole distribution, it cuts off the tail — only tokens that together account for the top P% of probability are considered.
+
+- `top_p=1.0` → all tokens considered (default)
+- `top_p=0.9` → only the tokens making up the top 90% of probability mass
+
+**Don't tune both at the same time.** Pick one and leave the other at its default. Adjusting both simultaneously makes it impossible to reason about what's causing output changes.
 
 ---
 
