@@ -191,48 +191,125 @@ Recursive: "The fox was clever and fast."                     ← respects parag
 
 Instead of splitting by character count or punctuation, group sentences that are **about the same topic** together into one chunk. When the topic shifts, start a new chunk.
 
-### How it works:
-1. Split the text into individual sentences
-2. Embed each sentence
-3. Calculate similarity between consecutive sentences
-4. When similarity drops sharply → topic has changed → start a new chunk
+### How it works internally — step by step
 
-### Input text:
-```
-Sentence 1: "The fox was known for its speed."
-Sentence 2: "It could outrun almost any predator."
-Sentence 3: "One morning the fox discovered a beautiful garden."
-Sentence 4: "The garden had roses, tulips, and sunflowers."
-Sentence 5: "The fox had never seen so many colours."
-```
+#### Step 1 — Split into sentences
 
-### Similarity between consecutive sentences:
+Take the raw text and split into individual sentences first:
+
 ```
-S1 → S2: 0.91  (both about fox's speed)
-S2 → S3: 0.31  ← BIG DROP — topic shifts from speed to garden
-S3 → S4: 0.88  (both about the garden)
-S4 → S5: 0.85  (both about the garden's appearance)
+Text:
+"Dogs are loyal animals. They protect their owners.
+Paris is the capital of France. The Eiffel Tower is famous worldwide."
+
+Sentences:
+S1: "Dogs are loyal animals."
+S2: "They protect their owners."
+S3: "Paris is the capital of France."
+S4: "The Eiffel Tower is famous worldwide."
 ```
 
-### Result:
+#### Step 2 — Embed every sentence
+
+Each sentence is sent to the embedding model independently:
+
 ```
-Chunk 1: "The fox was known for its speed. It could outrun almost any predator."
-Chunk 2: "One morning the fox discovered a beautiful garden. The garden had roses,
-          tulips, and sunflowers. The fox had never seen so many colours."
+S1 → [0.82, 0.11, -0.43, ...]   (animals / loyalty)
+S2 → [0.79, 0.14, -0.39, ...]   (animals / protection)
+S3 → [0.12, 0.71,  0.55, ...]   (geography / France)
+S4 → [0.09, 0.68,  0.61, ...]   (geography / landmarks)
 ```
 
-Each chunk is a coherent topic, not an arbitrary slice of text.
+#### Step 3 — Measure similarity between consecutive sentence pairs
+
+```
+similarity(S1, S2) = 0.95  ← very similar (both about dogs)
+similarity(S2, S3) = 0.18  ← very different (dogs → Paris)
+similarity(S3, S4) = 0.91  ← very similar (both about Paris/France)
+```
+
+Plotted as a graph:
+
+```
+Similarity
+  1.0 │
+  0.9 │   ●               ●
+  0.8 │
+  0.7 │
+  0.6 │
+  0.5 │  - - - - threshold - - - - -
+  0.4 │
+  0.3 │
+  0.2 │           ●
+  0.1 │
+      └───────────────────────
+         S1→S2   S2→S3   S3→S4
+```
+
+#### Step 4 — Find the breakpoints
+
+Any consecutive pair whose similarity drops **below the threshold (e.g. 0.5)** is a topic boundary:
+
+```
+S1 "Dogs are loyal animals."        ┐
+S2 "They protect their owners."     ┘  → Chunk 1 (topic: dogs)
+
+                                       ← BREAKPOINT (similarity 0.18 < 0.5)
+
+S3 "Paris is the capital of France."┐
+S4 "The Eiffel Tower is famous..."  ┘  → Chunk 2 (topic: Paris)
+```
+
+#### Step 5 — Output: topic-coherent chunks
+
+```
+Chunk 1: "Dogs are loyal animals. They protect their owners."
+Chunk 2: "Paris is the capital of France. The Eiffel Tower is famous worldwide."
+```
+
+#### Compare to fixed-size on the same text (60-char limit):
+
+```
+Fixed Chunk 1: "Dogs are loyal animals. They protect their"   ← cuts mid-sentence
+Fixed Chunk 2: "their owners. Paris is the capital of Fran"  ← mixes dogs + Paris!
+Fixed Chunk 3: "France. The Eiffel Tower is famous worldwide"
+```
+
+Fixed-size chunk 2 mixes two completely unrelated topics in one chunk. When someone asks "What is Paris the capital of?", the retrieved chunk also contains dog content — noise that confuses the LLM. Semantic chunking eliminates that noise.
+
+### The threshold — how strict should the breakpoint be?
+
+```
+Low threshold (e.g. 0.3)  → breaks less often → larger chunks, fewer splits
+High threshold (e.g. 0.7) → breaks more often → smaller chunks, may over-split related sentences
+```
+
+Start at 0.5. Test retrieval on 5 real questions. Adjust if needed.
+
+### The cost trade-off
+
+Semantic chunking embeds every individual sentence to find breakpoints — then discards those sentence-level embeddings and re-embeds the final chunks.
+
+```
+Document with 200 sentences:
+  Fixed-size:  ~20 embedding API calls (one per final chunk)
+  Semantic:    ~200 + 20 = ~220 embedding API calls
+```
+
+About 10x more embedding calls at index time. At $0.02/MTok this is still fractions of a cent — negligible cost. But it's slower to build the index.
 
 ### When to use:
 - High-quality RAG where retrieval accuracy matters most
 - Long documents with many distinct topics (annual reports, research papers)
+- When fixed or recursive chunking gives poor retrieval results
 
 ### Trade-offs:
 | Pro | Con |
 |---|---|
-| Best retrieval quality | Requires embedding every sentence (slower + costs more) |
+| Best retrieval quality | Requires embedding every sentence (slower at index time) |
 | Chunks match how humans think about topics | Chunks vary widely in size |
 | Fewer "broken context" problems | Overkill for short, well-structured documents |
+| No arbitrary size limits | ~10x more embedding calls at index time |
 
 ---
 
