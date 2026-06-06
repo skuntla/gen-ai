@@ -23,8 +23,12 @@ pip-log.txt
 .ipynb_checkpoints/
 *.ipynb_checkpoints
 
-# Data & indexes
-data/corpus/
+# Data & indexes (keep directory structure via .gitkeep)
+data/corpus/*
+!data/corpus/.gitkeep
+data/index/*
+!data/index/.gitkeep
+*.pdf
 *.faiss
 *.pkl
 
