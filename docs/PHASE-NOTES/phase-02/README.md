@@ -15,7 +15,9 @@
 | [vector-store.md](vector-store.md) | Vector stores vs regular DBs, FAISS internals, chunking strategies with examples |
 | [chunking-guide.md](chunking-guide.md) | In-depth guide: all document types (tables, images, charts, mixed), strategy per type |
 | [enterprise-chunking.md](enterprise-chunking.md) | How enterprises handle chunking at scale: classification, sampling, multi-strategy pipelines |
+| [production-tooling.md](production-tooling.md) | PDF extractors and chunking libraries vs our Phase 02 code; managed platforms |
 | [summarization.md](summarization.md) | Summarization vs RAG: full context, Map-Reduce, Refine — when to use each |
 | [design.md](design.md) | What we built, libraries, design decisions, acceptance criteria |
+| [code-walkthrough.md](code-walkthrough.md) | Line-by-line teaching guide for `src/rag.py` (workshop script) |
 | [questions.md](questions.md) | Interview questions covering all Phase 02 topics |
 | [reflection.md](reflection.md) | Observations after implementation |
