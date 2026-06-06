@@ -13,6 +13,7 @@
 | [concepts.md](concepts.md) | The RAG problem, the 6-step pipeline, embeddings, vector stores, chunking |
 | [embeddings.md](embeddings.md) | Deep dive: history, how vectors work, dimensions, model options, costs |
 | [vector-store.md](vector-store.md) | Vector stores vs regular DBs, FAISS internals, chunking strategies with examples |
+| [chunking-guide.md](chunking-guide.md) | In-depth guide: all document types (tables, images, charts, mixed), strategy per type |
 | [design.md](design.md) | What we built, libraries, design decisions, acceptance criteria |
 | [questions.md](questions.md) | Interview questions covering all Phase 02 topics |
 | [reflection.md](reflection.md) | Observations after implementation |
