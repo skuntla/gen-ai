@@ -277,6 +277,85 @@ Fixed Chunk 3: "France. The Eiffel Tower is famous worldwide"
 
 Fixed-size chunk 2 mixes two completely unrelated topics in one chunk. When someone asks "What is Paris the capital of?", the retrieved chunk also contains dog content — noise that confuses the LLM. Semantic chunking eliminates that noise.
 
+### How it knows which sentences to group together
+
+The algorithm never compares all possible combinations. It only ever compares **consecutive sentence pairs**, one at a time, left to right — like reading a book and placing a bookmark whenever the topic changes.
+
+```
+S1: "Dogs are loyal animals."
+S2: "They protect their owners."         compare S1↔S2 → 0.95 (similar) → same chunk
+S3: "Dogs also make great companions."   compare S2↔S3 → 0.88 (similar) → same chunk
+S4: "Training a dog takes patience."     compare S3↔S4 → 0.82 (similar) → same chunk
+S5: "Paris is the capital of France."    compare S4↔S5 → 0.11 (different) → NEW CHUNK ✂
+S6: "The Eiffel Tower is iconic."        compare S5↔S6 → 0.93 (similar) → same chunk
+S7: "The Seine river runs through it."   compare S6↔S7 → 0.87 (similar) → same chunk
+```
+
+Result:
+```
+Chunk 1: S1 + S2 + S3 + S4   (all about dogs)
+Chunk 2: S5 + S6 + S7        (all about Paris)
+```
+
+The algorithm never asked "is S1 related to S5?" — it only ever looks one step ahead.
+
+---
+
+### The problem: gradual topic drift
+
+Real documents don't always switch topics suddenly. Sometimes they drift slowly:
+
+```
+S1: "Dogs are loyal animals."
+S2: "They protect their owners."
+S3: "Owners need to train their pets properly."
+S4: "Training requires patience and consistency."
+S5: "Consistent habits are key to any skill."
+S6: "Learning a new language also requires daily practice."
+S7: "French is spoken in Paris and across Europe."
+```
+
+Pairwise similarities:
+```
+S1↔S2: 0.92   S2↔S3: 0.75   S3↔S4: 0.81
+S4↔S5: 0.61   S5↔S6: 0.52   S6↔S7: 0.58
+```
+
+With threshold 0.5, no cut ever happens — everything ends up in one chunk even though S1 and S7 have nothing to do with each other. Adjacent pair comparison fails on gradual drift.
+
+---
+
+### The fix: sliding window average
+
+Instead of comparing the current sentence to just the previous one, compare it to the **average of the last N sentences**:
+
+```
+Window size = 3
+
+When evaluating S5:
+  Compare S5 to average of [S2, S3, S4] → similarity 0.58  (still ok)
+
+When evaluating S6:
+  Compare S6 to average of [S3, S4, S5] → similarity 0.41  ← drops below 0.5
+  → BREAKPOINT ✂
+```
+
+The window smooths out gradual drift and catches the point where the topic has genuinely moved on — even when no single step was a dramatic drop.
+
+---
+
+### Three comparison approaches
+
+| Approach | Compares | Good for |
+|---|---|---|
+| Adjacent pairs | S(n) vs S(n-1) | Sharp topic switches |
+| Sliding window | S(n) vs average of last K sentences | Gradual topic drift (recommended) |
+| All pairs | S(n) vs every other sentence | Too expensive, rarely used |
+
+Most production implementations (including LangChain's `SemanticChunker`) use adjacent pairs by default but let you configure the window size.
+
+---
+
 ### The threshold — how strict should the breakpoint be?
 
 ```
