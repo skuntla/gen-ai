@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
+description: Infosys AR FY2026 — RAG pipeline eval (Phase 03)
+
+prompts:
+  - "{{question}}"
+
+providers:
+  - id: file://rag_provider.py
+    label: rag-top5-70b
+    config:
+      top_k: 5
+
+  - id: file://rag_provider.py
+    label: rag-top10-70b
+    config:
+      top_k: 10
+
+  - id: file://rag_provider.py
+    label: rag-top5-8b
+    config:
+      top_k: 5
+      model: llama-3.1-8b-instant
+
+defaultTest:
+  assertThreshold: 1
+
+tests: file://test_cases.yaml

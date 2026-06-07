@@ -111,8 +111,8 @@ See [enterprise-chunking.md](enterprise-chunking.md) for how firms route documen
 | **Metadata** | `source` + `page` | Section title, doc type, date, table flag, etc. |
 | **Table/chart handling** | None (text-only) | Dedicated table extractor or vision model |
 | **Indexing** | Manual `python src/rag.py --index` | Scheduled ingestion job on document upload |
-| **Quality check** | Manual query testing | Golden test set + retrieval metrics (Phase 03) |
-| **Validation** | Eyeball results | Automated eval harness |
+| **Quality check** | Manual query testing | Golden test set + retrieval metrics — see [Phase 03 production-tooling.md](../phase-03/production-tooling.md) |
+| **Validation** | Eyeball results | Automated eval harness (Promptfoo, LangSmith, or custom CI) |
 
 The **concepts are identical** — chunk, embed, store, retrieve, generate. Production adds tooling, metadata, and measurement on top.
 
@@ -160,3 +160,4 @@ That way trainees understand the mechanism, not just the API.
 | Per document-type chunking (tables, charts) | [chunking-guide.md](chunking-guide.md) |
 | Chunking strategies and semantic splitting | [vector-store.md](vector-store.md) |
 | Known limitations from our Infosys run | [reflection.md](reflection.md) |
+| Enterprise eval tooling (Phase 03) | [../phase-03/production-tooling.md](../phase-03/production-tooling.md) |

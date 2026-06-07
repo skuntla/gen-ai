@@ -27,6 +27,17 @@ cp .env.example .env   # add your API keys
 pip install -r requirements.txt
 ```
 
+### Phase 03 — run eval
+
+Requires Phase 02 index built (`python src/rag.py --index`) and [Promptfoo installed](docs/PHASE-NOTES/phase-03/setup.md).
+
+```bash
+./evals/run_eval.sh
+promptfoo view
+```
+
+See [docs/PHASE-NOTES/phase-03/](docs/PHASE-NOTES/phase-03/) for concepts, walkthrough, and baseline results.
+
 ## Reference
 
 Full requirements and design decisions: [docs/REQUIREMENTS.md](docs/REQUIREMENTS.md)

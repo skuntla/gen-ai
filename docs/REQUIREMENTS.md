@@ -249,11 +249,11 @@ Each phase below includes: **goal**, **deliverable**, **acceptance criteria**, *
 6. Document baseline numbers for future regression
 
 **Acceptance criteria:**
-- [ ] At least 10 test cases covering factual, ambiguous, multi-doc, and out-of-scope questions
-- [ ] At least 3 provider configurations compared side-by-side
-- [ ] Web UI shows pass/fail, latency, and cost per cell
-- [ ] A "winning" configuration is chosen with written justification
-- [ ] Re-running eval after a prompt change detects regressions
+- [x] At least 10 test cases covering factual, ambiguous, multi-doc, and out-of-scope questions
+- [x] At least 3 provider configurations compared side-by-side
+- [x] Web UI shows pass/fail, latency, and cost per cell
+- [x] A "winning" configuration is chosen with written justification — see [phase-03/design.md](PHASE-NOTES/phase-03/design.md)
+- [x] Re-running eval after a prompt change detects regressions — baseline + regression protocol in [phase-03/design.md](PHASE-NOTES/phase-03/design.md)
 
 **Dependencies:** Phase 02 (`rag.py` pipeline)
 
