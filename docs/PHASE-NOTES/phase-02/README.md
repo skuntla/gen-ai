@@ -19,5 +19,6 @@
 | [summarization.md](summarization.md) | Summarization vs RAG: full context, Map-Reduce, Refine — when to use each |
 | [design.md](design.md) | What we built, libraries, design decisions, acceptance criteria |
 | [code-walkthrough.md](code-walkthrough.md) | Line-by-line teaching guide for `src/rag.py` (workshop script) |
+| [teaching-guide.md](teaching-guide.md) | **Master teaching flow** — Part 1 concepts, Part 2 implementation, lab script, checklist |
 | [questions.md](questions.md) | Interview questions covering all Phase 02 topics |
 | [reflection.md](reflection.md) | Observations after implementation |
