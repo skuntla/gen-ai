@@ -17,5 +17,6 @@
 | [teaching-guide.md](teaching-guide.md) | **Master teaching flow** — Part 1 concepts, Part 2 implementation, lab script, checklist |
 | [promptfoo-details.md](promptfoo-details.md) | What Promptfoo is, LLM vs RAG vs agent eval, assertion types |
 | [production-tooling.md](production-tooling.md) | Enterprise eval stack: Promptfoo vs LangSmith, RAGAS, CI, monitoring |
-| [questions.md](questions.md) | Interview questions, tough oral-review Q&A with model answers |
+| [questions.md](questions.md) | Project-specific interview Q&A |
+| [INTERVIEW-QUESTIONS-DOCUMENT.md](../INTERVIEW-QUESTIONS-DOCUMENT.md) | Generic challenging interview bank (Phases 01–03) |
 | [reflection.md](reflection.md) | Post-implementation observations and lessons learned |

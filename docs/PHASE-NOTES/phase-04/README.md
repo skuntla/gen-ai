@@ -17,7 +17,8 @@
 | [setup.md](setup.md) | API keys, seed DB, CLI, routing tests, troubleshooting |
 | [code-walkthrough.md](code-walkthrough.md) | Line-by-line guide for `agent.py` |
 | [teaching-guide.md](teaching-guide.md) | Workshop flow (~4–6 hours) |
-| [questions.md](questions.md) | Interview prep |
+| [questions.md](questions.md) | Agent interview prep — 19 questions with detailed model answers |
+| [INTERVIEW-QUESTIONS-DOCUMENT.md](../INTERVIEW-QUESTIONS-DOCUMENT.md) | Generic interview bank — Phases 01–03 (LLM, RAG, eval) |
 | [reflection.md](reflection.md) | Post-implementation notes |
 
 ---

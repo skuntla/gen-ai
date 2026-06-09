@@ -18,5 +18,6 @@
 | [design.md](design.md) | What we built, libraries used, design decisions, acceptance criteria |
 | [code-walkthrough.md](code-walkthrough.md) | Line-by-line teaching guide for `src/llm_chat.py` (workshop script) |
 | [teaching-guide.md](teaching-guide.md) | **Master teaching flow** — Part 1 concepts, Part 2 implementation, lab script, checklist |
-| [questions.md](questions.md) | Interview questions and answers covering all Phase 01 topics |
+| [questions.md](questions.md) | Project-specific interview Q&A |
+| [INTERVIEW-QUESTIONS-DOCUMENT.md](../INTERVIEW-QUESTIONS-DOCUMENT.md) | Generic challenging interview bank (Phases 01–03) |
 | [reflection.md](reflection.md) | Observations after implementation |
