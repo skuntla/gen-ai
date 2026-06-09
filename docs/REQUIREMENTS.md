@@ -276,20 +276,20 @@ Each phase below includes: **goal**, **deliverable**, **acceptance criteria**, *
 
 **Implementation plan:**
 1. Use raw SDK — no LangChain yet
-2. Define 4 tools with clear docstrings and type hints:
+2. Define 4 tools with clear descriptions and JSON schemas:
    - `search_docs` — wraps Phase 2 RAG
-   - `web_search` — Brave or Tavily API
-   - `calculator` — safe math evaluation
-   - `text_to_sql` — natural language → SQL over `data/sample.db`
+   - `run_sql` — LLM-written SELECT over `data/sample.db` (SELECT-only guard)
+   - `calculate` — safe `ast` math evaluation
+   - `web_search` — Tavily API (stub without key)
 3. Implement agent loop with max ~10 iterations
-4. Test routing: "What's in my docs?" → RAG; "What's 17% of 842?" → calculator; etc.
+4. Test routing: 10 hand-crafted questions (see `docs/PHASE-NOTES/phase-04/design.md`)
 
 **Acceptance criteria:**
-- [ ] Agent correctly selects tools for at least 8/10 hand-crafted test questions
-- [ ] Loop terminates (no infinite tool-call cycles)
-- [ ] RAG and SQL tools return structured results the LLM can use
-- [ ] Tool descriptions are documented and intentionally written
-- [ ] Agent runs interactively from terminal
+- [x] Agent correctly selects tools for at least 8/10 hand-crafted test questions (10/10 verified)
+- [x] Loop terminates (no infinite tool-call cycles)
+- [x] RAG and SQL tools return structured results the LLM can use
+- [x] Tool descriptions are documented and intentionally written
+- [x] Agent runs interactively from terminal
 
 **Dependencies:** Phases 01–02; optional web search API key
 
