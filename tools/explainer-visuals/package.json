@@ -1,0 +1,14 @@
+{
+  "name": "explainer-visuals",
+  "version": "0.1.0",
+  "private": true,
+  "description": "NotebookLM-style explainer visuals for phase notes",
+  "scripts": {
+    "export": "node export.js",
+    "export:phase-01": "node export.js scenes/phase-01-messages.json",
+    "export:statelessness": "node export.js scenes/phase-01-statelessness.json ../../docs/PHASE-NOTES/phase-01/visuals/statelessness.png"
+  },
+  "dependencies": {
+    "playwright": "^1.52.0"
+  }
+}

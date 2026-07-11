@@ -1,0 +1,30 @@
+{
+  "template": "analogy-table",
+  "title": "Why LLMs Are Stateless — Phase 01",
+  "theme": "statelessness",
+  "background": "dotted-paper",
+  "brand": "◉ GenAI Learning Path · Phase 01",
+  "table": {
+    "position": { "left": 360, "top": 180, "width": 620 },
+    "columnWidths": [170, 250, 200],
+    "headers": ["Concept", "Analogy", "What it means"],
+    "rows": [
+      ["Stateless API", "A Vending Machine", "Each call starts fresh"],
+      ["Message history", "Your Shopping Receipt", "You resend past turns yourself"],
+      ["Context window", "Bag Size Limit", "Only so much history fits"]
+    ],
+    "highlights": ["Stateless API", "Message history", "Context window"]
+  },
+  "illustrations": [
+    { "type": "vending-machine", "x": 90, "y": 120, "w": 95, "h": 130, "rotation": -4 },
+    { "type": "receipt", "x": 185, "y": 330, "w": 72, "h": 95, "rotation": 6 },
+    { "type": "tote-bag", "x": 930, "y": 140, "w": 110, "h": 95, "rotation": -5 },
+    { "type": "envelope", "x": 1020, "y": 300, "w": 95, "h": 68, "rotation": 10 },
+    { "type": "envelope", "x": 900, "y": 430, "w": 88, "h": 62, "rotation": -8 }
+  ],
+  "path": {
+    "d": "M 300 200 C 210 205, 200 290, 270 310 C 340 330, 250 400, 220 455 C 185 520, 320 545, 430 535 C 620 520, 700 430, 860 470 C 980 500, 1040 420, 1090 360",
+    "strokeWidth": 2,
+    "strokeLineDash": [10, 10]
+  }
+}

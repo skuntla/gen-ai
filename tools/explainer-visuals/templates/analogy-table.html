@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Explainer Visual</title>
+  <script src="https://cdn.jsdelivr.net/npm/roughjs@4.6.6/bundled/rough.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      display: grid;
+      place-items: center;
+      min-height: 100vh;
+      background: #55524d;
+      font-family: Arial, sans-serif;
+    }
+
+    .scene {
+      position: relative;
+      width: 1280px;
+      height: 720px;
+      overflow: hidden;
+      background-color: #fff;
+      background-image: radial-gradient(circle, #dedede 1px, transparent 1px);
+      background-size: 18px 18px;
+    }
+
+    #drawing {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .table {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.97);
+      border-radius: 4px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      overflow: hidden;
+    }
+
+    .row {
+      display: grid;
+      min-height: 132px;
+    }
+
+    .row.header {
+      min-height: 60px;
+      background: #f2f2f2;
+      font-weight: 700;
+    }
+
+    .cell {
+      display: flex;
+      align-items: center;
+      padding: 20px;
+      border-right: 1px solid #e8e8e8;
+      border-bottom: 1px solid #e8e8e8;
+      font-size: 18px;
+      color: #292929;
+    }
+
+    .cell:last-child {
+      border-right: 0;
+    }
+
+    .row:last-child .cell {
+      border-bottom: 0;
+    }
+
+    .highlight {
+      position: relative;
+      display: inline-block;
+      z-index: 1;
+      padding: 1px 3px;
+    }
+
+    .highlight::before {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      left: -3px;
+      right: -3px;
+      bottom: -1px;
+      height: 22px;
+      border-radius: 5px;
+      background: rgba(247, 216, 87, 0.47);
+      transform: rotate(-2deg);
+    }
+
+    .brand {
+      position: absolute;
+      right: 34px;
+      bottom: 24px;
+      font-size: 15px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="scene">
+    <svg id="drawing" viewBox="0 0 1280 720"></svg>
+    <div class="table" id="table"></div>
+    <div class="brand" id="brand"></div>
+  </div>
+
+  <script src="../lib/illustrations.js"></script>
+  <script>
+    function shouldHighlight(value, highlights) {
+      if (!highlights?.length) {
+        return false;
+      }
+      const normalized = String(value).trim().toLowerCase();
+      return highlights.some((item) => String(item).trim().toLowerCase() === normalized);
+    }
+
+    function renderCellContent(value, highlights) {
+      if (shouldHighlight(value, highlights)) {
+        const span = document.createElement("span");
+        span.className = "highlight";
+        span.textContent = value;
+        return span;
+      }
+      return document.createTextNode(value);
+    }
+
+    function renderTable(scene) {
+      const table = scene.table;
+      const tableEl = document.getElementById("table");
+      const position = table.position ?? { left: 360, top: 180, width: 620 };
+      const columnWidths = table.columnWidths ?? [160, 280, 180];
+
+      tableEl.style.left = `${position.left}px`;
+      tableEl.style.top = `${position.top}px`;
+      tableEl.style.width = `${position.width}px`;
+
+      const headerRow = document.createElement("div");
+      headerRow.className = "row header";
+      headerRow.style.gridTemplateColumns = columnWidths.map((w) => `${w}px`).join(" ");
+      for (const header of table.headers) {
+        const cell = document.createElement("div");
+        cell.className = "cell";
+        cell.textContent = header;
+        headerRow.appendChild(cell);
+      }
+      tableEl.appendChild(headerRow);
+
+      for (const row of table.rows) {
+        const rowEl = document.createElement("div");
+        rowEl.className = "row";
+        rowEl.style.gridTemplateColumns = columnWidths.map((w) => `${w}px`).join(" ");
+        for (const value of row) {
+          const cell = document.createElement("div");
+          cell.className = "cell";
+          cell.appendChild(renderCellContent(value, table.highlights));
+          rowEl.appendChild(cell);
+        }
+        tableEl.appendChild(rowEl);
+      }
+    }
+
+    function renderScene(scene) {
+      document.title = scene.title ?? "Explainer Visual";
+      document.getElementById("brand").textContent = scene.brand ?? "◉ Generated Explainer";
+
+      renderTable(scene);
+
+      const svg = document.getElementById("drawing");
+      svg.innerHTML = "";
+      const rc = rough.svg(svg);
+
+      drawPath(rc, svg, scene.path);
+      renderIllustrations(rc, svg, scene);
+    }
+
+    window.renderScene = renderScene;
+
+    if (window.SCENE) {
+      renderScene(window.SCENE);
+    }
+  </script>
+</body>
+</html>

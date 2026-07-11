@@ -1,0 +1,29 @@
+{
+  "template": "analogy-table",
+  "title": "LLM Messages Format — Phase 01",
+  "theme": "messaging",
+  "background": "dotted-paper",
+  "brand": "◉ GenAI Learning Path · Phase 01",
+  "table": {
+    "position": { "left": 360, "top": 180, "width": 620 },
+    "columnWidths": [140, 280, 200],
+    "headers": ["Role", "Analogy", "Purpose"],
+    "rows": [
+      ["system", "The Director's Brief", "Persona, rules, format"],
+      ["user", "The Question", "What you ask"],
+      ["assistant", "The Performance", "What the model returns"]
+    ],
+    "highlights": ["system", "user", "assistant"]
+  },
+  "illustrations": [
+    { "type": "sealed-envelope", "x": 95, "y": 125, "w": 100, "h": 70, "rotation": -6 },
+    { "type": "script-page", "x": 175, "y": 310, "w": 105, "h": 78, "rotation": 4 },
+    { "type": "response-scroll", "x": 955, "y": 155, "w": 100, "h": 72, "rotation": 8 },
+    { "type": "server-cloud", "x": 870, "y": 380, "scale": 0.95 }
+  ],
+  "path": {
+    "d": "M 330 185 C 235 190, 235 285, 310 300 C 375 315, 300 390, 245 425 C 175 470, 295 520, 410 530 C 610 548, 690 470, 850 515 C 975 550, 1020 490, 1080 450",
+    "strokeWidth": 2,
+    "strokeLineDash": [10, 10]
+  }
+}
