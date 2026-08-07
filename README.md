@@ -4,6 +4,12 @@ A hands-on implementation of [The GenAI Learning Path](https://www.incontext.sh/
 
 One evolving Python codebase built across 11 phases — from a raw LLM API call to a production-minded multi-agent system.
 
+## Learning Roadmap
+
+For the fundamentals-first path covering neural networks, LLM internals, Transformers, training, RAG and retrieval alternatives, production AI, and Forward-Deployed Engineering, see:
+
+- [AI Foundations to Forward-Deployed AI Engineer](docs/AI-FOUNDATIONS-LEARNING-PATH.md)
+
 ## Phases
 
 | # | Topic | Artifact |
@@ -40,4 +46,5 @@ See [docs/PHASE-NOTES/phase-03/](docs/PHASE-NOTES/phase-03/) for concepts, walkt
 
 ## Reference
 
-Full requirements and design decisions: [docs/REQUIREMENTS.md](docs/REQUIREMENTS.md)
+- Full requirements and design decisions: [docs/REQUIREMENTS.md](docs/REQUIREMENTS.md)
+- Fundamentals and FDE learning roadmap: [docs/AI-FOUNDATIONS-LEARNING-PATH.md](docs/AI-FOUNDATIONS-LEARNING-PATH.md)
